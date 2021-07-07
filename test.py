@@ -135,7 +135,7 @@ async def add_members(scraping_group, target_group):
             user['username'] = row[0]
             users.append(user)
     print('Choose a group to add members:')
-    target_group_entity = await client.get_entity(target_group)
+    target_group_entity = await client1.get_entity(target_group)
     account_index = 0
     
     for count, user in enumerate(users):
