@@ -91,8 +91,8 @@ def main():
 async def scrape_members(scraping_group):
     
     all_participants = []
-    all_participants =  await client.get_participants(scraping_group, aggressive=True)
-    scraping_group_entity = await client.get_entity(scraping_group)
+    all_participants =  await client1.get_participants(scraping_group, aggressive=True)
+    scraping_group_entity = await client1.get_entity(scraping_group)
     with open(f"{scraping_group_entity.title}.csv","w",encoding='UTF-8') as f:
         writer = csv.writer(f,delimiter=",",lineterminator="\n")
         for user in all_participants:
