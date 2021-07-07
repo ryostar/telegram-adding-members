@@ -159,12 +159,8 @@ async def add_members(scraping_group, target_group):
                     break
             except FloodWaitError as e :
                 print(f"This account has to wait for {e.seconds}")
-                account_index +=1
-                if account_index == 6:
-                    print('adding capacity over')
-                    break
+                time.sleep(e.seconds)
             except PeerFloodError as e :
-                print(f"This account has to wait for {e.seconds}")
                 account_index +=1
                 if account_index == 6:
                     print('adding capacity over')
