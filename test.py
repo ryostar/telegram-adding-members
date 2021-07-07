@@ -150,7 +150,7 @@ async def add_members(scraping_group, target_group):
                 user_to_add = await all_accounts[account_index].get_entity(user['username'])
                 await all_accounts[account_index](InviteToChannelRequest(target_group_entity.title,[user_to_add]))
                 print("Waiting for 10-30 Seconds...")
-                time.sleep(random.randrange(20, 30))
+                time.sleep(random.randrange(60, 120))
             except UserChannelsTooMuchError:
                 print("This account has added too many User in channel")
                 account_index +=1
