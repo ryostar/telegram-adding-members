@@ -120,7 +120,7 @@ async def add_members(scraping_group, target_group):
 
     added_member = 0
     all_participants = []
-    all_participants =  await client.get_participants(target_group, aggressive=True)
+    all_participants =  await client1.get_participants(target_group, aggressive=True)
     all_participants_username = []
     for i in all_participants:
         if i.username is not None:
