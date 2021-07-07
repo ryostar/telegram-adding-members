@@ -126,7 +126,7 @@ async def add_members(scraping_group, target_group):
         if i.username is not None:
             all_participants_username.append(i.username)
     all_accounts = [client1, client2, client3, client4, client5, client6]
-    scraping_group_entity = await client.get_entity(scraping_group)
+    scraping_group_entity = await client1.get_entity(scraping_group)
     users = []
     with open(f'{scraping_group_entity.title}.csv', encoding='UTF-8') as f:
         rows = csv.reader(f,delimiter=",",lineterminator="\n")
