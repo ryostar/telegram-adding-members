@@ -72,8 +72,8 @@ def main():
 
     scraping_group = 'https://t.me/SRTMSG'
     target_group = 'https://t.me/cloudcitysg'
-    # loop = asyncio.get_event_loop()
-    # loop.run_until_complete(scrape_members(scraping_group))
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(scrape_members(scraping_group))
     
     loop = asyncio.get_event_loop()
     loop.run_until_complete(add_members(scraping_group, target_group))
