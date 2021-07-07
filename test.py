@@ -51,7 +51,6 @@ api_hash6 = '6ebfd18cca2b1dc6bebcd42f6164e922'
 api_id = 5911805
 api_hash = 'baf59bae0d7caba308cdada2079670c2'
 
-client = TelegramClient("MAIN", api_id, api_hash)
 client1 = TelegramClient("+918931081907", api_id1, api_hash1)
 client2 = TelegramClient("+916352921999", api_id2, api_hash2)
 client3 = TelegramClient("+918320052578", api_id3, api_hash3)
@@ -62,7 +61,6 @@ client6 = TelegramClient("+918853210160", api_id6, api_hash6)
 
 
 def main():
-    client.start()
     client1.start()
     client2.start()
     client3.start()
@@ -80,7 +78,6 @@ def main():
     loop = asyncio.get_event_loop()
     loop.run_until_complete(add_members(scraping_group, target_group))
     
-    client.disconnect()
     client1.disconnect()
     client2.disconnect()
     client3.disconnect()
