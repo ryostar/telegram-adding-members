@@ -195,7 +195,6 @@ async def add_user(added_member_count, adding_user_info_list, adding_username, t
         print("This username doesn't exist")
     except Exception as e:
         print(e)
-        TracebackType.print_exc()
         
         
 
