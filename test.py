@@ -187,10 +187,13 @@ async def add_user(added_member_count, adding_user_info_list, adding_username, t
         all_adding_accounts.remove(adding_user_info_list)
     except UserPrivacyRestrictedError:
         print("The user's privacy settings do not allow you to do this. Skipping.")
+        continue
     except UserNotMutualContactError:
         print("The user's privacy settings do not allow you to do this. Skipping.")
+        continue 
     except UsernameNotOccupiedError:
         print("This username doesn't exist")
+        continue
     except Exception as e:
         print(e)
         TracebackType.print_exc()
