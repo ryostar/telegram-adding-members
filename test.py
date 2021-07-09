@@ -51,6 +51,7 @@ api_hash6 = '6ebfd18cca2b1dc6bebcd42f6164e922'
 api_id = 5911805
 api_hash = 'baf59bae0d7caba308cdada2079670c2'
 
+client = TelegramClient("MAIN", api_id, api_hash)
 client1 = TelegramClient("+918931081907", api_id1, api_hash1)
 client2 = TelegramClient("+916352921999", api_id2, api_hash2)
 client3 = TelegramClient("+918320052578", api_id3, api_hash3)
@@ -61,6 +62,7 @@ client6 = TelegramClient("+918853210160", api_id6, api_hash6)
 
 
 def main():
+    client.start()
     client1.start()
     client2.start()
     client3.start()
@@ -72,12 +74,13 @@ def main():
 
     scraping_group = 'https://t.me/SRTMSG'
     target_group = 'https://t.me/cloudcitysg'
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(scrape_members(scraping_group))
+    # loop = asyncio.get_event_loop()
+    # loop.run_until_complete(scrape_members(scraping_group))
     
     loop = asyncio.get_event_loop()
     loop.run_until_complete(add_members(scraping_group, target_group))
     
+    client.disconnect()
     client1.disconnect()
     client2.disconnect()
     client3.disconnect()
@@ -91,8 +94,8 @@ def main():
 async def scrape_members(scraping_group):
     
     all_participants = []
-    all_participants =  await client1.get_participants(scraping_group, aggressive=True)
-    scraping_group_entity = await client1.get_entity(scraping_group)
+    all_participants =  await client.get_participants(scraping_group, aggressive=True)
+    scraping_group_entity = await client.get_entity(scraping_group)
     with open(f"{scraping_group_entity.title}.csv","w",encoding='UTF-8') as f:
         writer = csv.writer(f,delimiter=",",lineterminator="\n")
         for user in all_participants:
@@ -118,65 +121,156 @@ async def scrape_members(scraping_group):
 async def add_members(scraping_group, target_group):
     
 
-    added_member = 0
+    all_adding_accounts= [[client1, True], [client2, True], [client3, True], [client4, True], [client5, True], [client6, True]]
+    
+    # This will take all user from target group
     all_participants = []
-    all_participants =  await client1.get_participants(target_group, aggressive=True)
+    all_participants =  await client.get_participants(target_group, aggressive=True)
     all_participants_username = []
     for i in all_participants:
         if i.username is not None:
             all_participants_username.append(i.username)
-    all_accounts = [client1, client2, client3, client4, client5, client6]
-    scraping_group_entity = await client1.get_entity(scraping_group)
+
+    # This will create list of username which are there in csv file
+    scraping_group_entity = await client.get_entity(scraping_group)
     users = []
     with open(f'{scraping_group_entity.title}.csv', encoding='UTF-8') as f:
         rows = csv.reader(f,delimiter=",",lineterminator="\n")
         for row in rows:
-            user = {}
-            user['username'] = row[0]
-            users.append(user)
-    print('Choose a group to add members:')
-    target_group_entity = await client1.get_entity(target_group)
-    account_index = 0
-    
-    for count, user in enumerate(users):
-        if user['username'] in all_participants_username:
-            added_member += 1
-            print(str(added_member) + ". " +user['username'] + ' is already added.')
+            users.append(row[0])
+
+    # created list for those who are added and those who aren't .
+    added_user = []
+    remaning_to_add_user = []    
+    for i in users:
+        if i in all_participants_username:
+            added_user.append(i)
         else:
-            added_member += 1
-            try:
-                adding_account_entity = await all_accounts[account_index].get_entity('me')
-                print ("{}.Adding {} by {}".format(added_member, user['username'], adding_account_entity.first_name))
-                user_to_add = await all_accounts[account_index].get_entity(user['username'])
-                await all_accounts[account_index](InviteToChannelRequest(target_group_entity.title,[user_to_add]))
-                print("Waiting for 10-30 Seconds...")
-                time.sleep(random.randrange(60, 120))
-            except UserChannelsTooMuchError:
-                print("This account has added too many User in channel")
-                account_index +=1
-                if account_index == 6:
-                    print('adding capacity over')
-                    break
-            except FloodWaitError as e :
-                print(f"This account has to wait for {e.seconds}")
-                time.sleep(e.seconds)
-            except PeerFloodError as e :
-                account_index +=1
-                if account_index == 6:
-                    print('adding capacity over')
-                    break
-            except UserPrivacyRestrictedError:
-                print("The user's privacy settings do not allow you to do this. Skipping.")
-                continue
-            except UserNotMutualContactError:
-                print("The user's privacy settings do not allow you to do this. Skipping.")
-                continue
-            except Exception as e:
-                print(e)
-                TracebackType.print_exc()
-                continue
-            if added_member == 500:
+            remaning_to_add_user.append(i)
+
+    added_member_count = len(added_user)
+    target_group_entity = await client.get_entity(target_group)
+    
+    remaning_to_add_user_index = 0
+    while True:
+        for i in all_adding_accounts:
+            adding_account_entity = await i[0].get_entity('me')
+            print(adding_account_entity.first_name)
+            if i[1]:
+                adding_username = remaning_to_add_user[remaning_to_add_user_index]
+                await add_user(added_member_count, i, adding_username, target_group_entity)
+                remaning_to_add_user_index += 1
+                added_member_count +=1
+
+
+
+
+
+
+
+async def add_user(added_member_count, adding_user_info_list, adding_username, target_group_entity):
+    try:
+        adding_account_entity = await adding_user_info_list[0].get_entity('me')
+        print ("{}. Adding {} by {}".format(added_member_count, adding_username, adding_account_entity.first_name))
+        user_to_add = await adding_user_info_list[0].get_entity(adding_username)
+        await adding_user_info_list[0](InviteToChannelRequest(target_group_entity.title,[user_to_add]))
+        print("Waiting for 10-30 Seconds")
+        time.sleep(random.randrange(60, 90))
+    except UserChannelsTooMuchError:
+        print(f"{adding_account_entity.first_name} has added too many User in channel")
+        adding_user_info_list[1] = False
+    except FloodWaitError as e :
+        print(f"This account has to wait for {e.seconds}, Because of Flood wait")
+        adding_user_info_list[1] = False
+        await asyncio.sleep(e.seconds)
+        adding_user_info_list[1] = True
+    except PeerFloodError as e:
+        print(e)
+        adding_user_info_list[1] = False
+    except UserPrivacyRestrictedError:
+        print("The user's privacy settings do not allow you to do this. Skipping.")
+    except UserNotMutualContactError:
+        print("The user's privacy settings do not allow you to do this. Skipping.")
+    except Exception as e:
+        print(e)
+        TracebackType.print_exc()
+        
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''    for user in remaning_to_add_user:
+        added_member_count += 1
+        try:
+            adding_account_entity = await all_accounts[account_index].get_entity('me')
+            print ("{}.Adding {} by {}".format(added_member_count, user, adding_account_entity.first_name))
+            user_to_add = await all_accounts[account_index].get_entity(user)
+            await all_accounts[account_index](InviteToChannelRequest(target_group_entity.title,[user_to_add]))
+            print("Waiting for 10-30 Seconds...")
+            time.sleep(random.randrange(20, 30))
+        except UserChannelsTooMuchError:
+            print("This account has added too many User in channel")
+            account_index +=1
+            if account_index == 6:
+                print('adding capacity over')
                 break
+        except FloodWaitError as e :
+            print(f"This account has to wait for {e.seconds}, Because of Flood wait")
+            account_index +=1
+            if account_index == 6:
+                print('adding capacity over')
+                break
+        except PeerFloodError as e:
+            print(f"{e}")
+            account_index +=1
+            if account_index == 6:
+                print('adding capacity over')
+                break
+        except UserPrivacyRestrictedError:
+            print("The user's privacy settings do not allow you to do this. Skipping.")
+            continue
+        except UserNotMutualContactError:
+            print("The user's privacy settings do not allow you to do this. Skipping.")
+            continue
+        except Exception as e:
+            print(e)
+            TracebackType.print_exc()
+            continue
+        if added_member_count == 500:
+            break'''
 
 
 
