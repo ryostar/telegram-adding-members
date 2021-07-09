@@ -15,7 +15,7 @@ logging.basicConfig(format='[%(levelname) 5s/%(asctime)s] %(name)s: %(message)s'
                    level=logging.INFO)
 from datetime import datetime
 from telethon.errors.rpcerrorlist import UserNotMutualContactError
-from telethon.errors.rpcerrorlist import FloodWaitError, UserChannelsTooMuchError
+from telethon.errors.rpcerrorlist import FloodWaitError, UserChannelsTooMuchError, UsernameNotOccupiedError
 
 # +918931081907 - A1
 api_id1 = 6095862
@@ -189,6 +189,8 @@ async def add_user(added_member_count, adding_user_info_list, adding_username, t
         print("The user's privacy settings do not allow you to do this. Skipping.")
     except UserNotMutualContactError:
         print("The user's privacy settings do not allow you to do this. Skipping.")
+    except UsernameNotOccupiedError:
+        print("This username doesn't exist")
     except Exception as e:
         print(e)
         TracebackType.print_exc()
