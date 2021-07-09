@@ -179,7 +179,8 @@ async def add_user(added_member_count, adding_user_info_list, adding_username, t
         # print(target_group_entity)
         await adding_user_info_list(InviteToChannelRequest(target_group_entity.username,[user_to_add]))
         print("Waiting for 10-30 Seconds")
-        time.sleep(random.randrange(60, 90))
+        await asyncio.sleep(random.randrange(60, 90))
+        # time.sleep(random.randrange(60, 90))
     except UserChannelsTooMuchError:
         print(f"{adding_account_entity.first_name} has added too many User in channel")
         all_adding_accounts.remove(adding_user_info_list)
