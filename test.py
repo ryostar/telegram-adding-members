@@ -59,6 +59,7 @@ client4 = TelegramClient("+919541837249", api_id4, api_hash4)
 client5 = TelegramClient("+918084374648", api_id5, api_hash5)
 client6 = TelegramClient("+918853210160", api_id6, api_hash6)
 
+all_adding_accounts= [client1, client2, client3, client4, client5, client6]
 
 
 def main():
@@ -119,10 +120,7 @@ async def scrape_members(scraping_group):
 
 
 async def add_members(scraping_group, target_group):
-    
-
-    all_adding_accounts= [[client1, True], [client2, True], [client3, True], [client4, True], [client5, True], [client6, True]]
-    
+    global all_adding_accounts
     # This will take all user from target group
     all_participants = []
     all_participants =  await client.get_participants(target_group, aggressive=True)
@@ -156,11 +154,10 @@ async def add_members(scraping_group, target_group):
         for i in all_adding_accounts:
             adding_account_entity = await i[0].get_entity('me')
             print(adding_account_entity.first_name)
-            if i[1]:
-                adding_username = remaning_to_add_user[remaning_to_add_user_index]
-                await add_user(added_member_count, i, adding_username, target_group_entity)
-                remaning_to_add_user_index += 1
-                added_member_count +=1
+            adding_username = remaning_to_add_user[remaning_to_add_user_index]
+            await add_user(added_member_count, i, adding_username, target_group_entity)
+            remaning_to_add_user_index += 1
+            added_member_count +=1
 
 
 
@@ -169,24 +166,25 @@ async def add_members(scraping_group, target_group):
 
 
 async def add_user(added_member_count, adding_user_info_list, adding_username, target_group_entity):
+    global all_adding_accounts
     try:
-        adding_account_entity = await adding_user_info_list[0].get_entity('me')
+        adding_account_entity = await adding_user_info_list.get_entity('me')
         print ("{}. Adding {} by {}".format(added_member_count, adding_username, adding_account_entity.first_name))
-        user_to_add = await adding_user_info_list[0].get_entity(adding_username)
-        await adding_user_info_list[0](InviteToChannelRequest(target_group_entity.title,[user_to_add]))
+        user_to_add = await adding_user_info_list.get_entity(adding_username)
+        await adding_user_info_list(InviteToChannelRequest(target_group_entity.title,[user_to_add]))
         print("Waiting for 10-30 Seconds")
         time.sleep(random.randrange(60, 90))
     except UserChannelsTooMuchError:
         print(f"{adding_account_entity.first_name} has added too many User in channel")
-        adding_user_info_list[1] = False
+        all_adding_accounts.remove(all_adding_accounts)
     except FloodWaitError as e :
         print(f"This account has to wait for {e.seconds}, Because of Flood wait")
-        adding_user_info_list[1] = False
+        all_adding_accounts.remove(all_adding_accounts)
         await asyncio.sleep(e.seconds)
-        adding_user_info_list[1] = True
+        all_adding_accounts.append(all_adding_accounts)
     except PeerFloodError as e:
         print(e)
-        adding_user_info_list[1] = False
+        all_adding_accounts.remove(all_adding_accounts)
     except UserPrivacyRestrictedError:
         print("The user's privacy settings do not allow you to do this. Skipping.")
     except UserNotMutualContactError:
