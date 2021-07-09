@@ -176,8 +176,8 @@ async def add_user(added_member_count, adding_user_info_list, adding_username, t
         adding_account_entity = await adding_user_info_list.get_entity('me')
         print ("{}. Adding {} by {}".format(added_member_count, adding_username, adding_account_entity.first_name))
         user_to_add = await adding_user_info_list.get_entity(adding_username)
-        target_group_entity = InputPeerChannel(target_group_entity.id,target_group_entity.access_hash)
-        await adding_user_info_list(InviteToChannelRequest(target_group_entity,[user_to_add]))
+        #target_group_entity = InputPeerChannel(target_group_entity.id,target_group_entity.access_hash)
+        await adding_user_info_list(InviteToChannelRequest(target_group_entity.title,[user_to_add]))
         print("Waiting for 10-30 Seconds")
         time.sleep(random.randrange(60, 90))
     except UserChannelsTooMuchError:
