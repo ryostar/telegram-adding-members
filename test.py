@@ -152,7 +152,7 @@ async def add_members(scraping_group, target_group):
     remaning_to_add_user_index = 0
     while True:
         for i in all_adding_accounts:
-            adding_account_entity = await i[0].get_entity('me')
+            adding_account_entity = await i.get_entity('me')
             print(adding_account_entity.first_name)
             adding_username = remaning_to_add_user[remaning_to_add_user_index]
             await add_user(added_member_count, i, adding_username, target_group_entity)
