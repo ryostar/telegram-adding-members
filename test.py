@@ -155,9 +155,14 @@ async def add_members(scraping_group, target_group):
             adding_account_entity = await i.get_entity('me')
             print(adding_account_entity.first_name)
             adding_username = remaning_to_add_user[remaning_to_add_user_index]
-            await add_user(added_member_count, i, adding_username, target_group_entity)
+            try:
+                await add_user(added_member_count, i, adding_username, target_group_entity)
+            except Exception as e:
+                print(e)
             remaning_to_add_user_index += 1
             added_member_count +=1
+        if len(all_adding_accounts):
+            break
 
 
 
@@ -187,98 +192,15 @@ async def add_user(added_member_count, adding_user_info_list, adding_username, t
         all_adding_accounts.remove(adding_user_info_list)
     except UserPrivacyRestrictedError:
         print("The user's privacy settings do not allow you to do this. Skipping.")
-        continue
     except UserNotMutualContactError:
         print("The user's privacy settings do not allow you to do this. Skipping.")
-        continue 
     except UsernameNotOccupiedError:
         print("This username doesn't exist")
-        continue
     except Exception as e:
         print(e)
         TracebackType.print_exc()
         
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-'''    for user in remaning_to_add_user:
-        added_member_count += 1
-        try:
-            adding_account_entity = await all_accounts[account_index].get_entity('me')
-            print ("{}.Adding {} by {}".format(added_member_count, user, adding_account_entity.first_name))
-            user_to_add = await all_accounts[account_index].get_entity(user)
-            await all_accounts[account_index](InviteToChannelRequest(target_group_entity.title,[user_to_add]))
-            print("Waiting for 10-30 Seconds...")
-            time.sleep(random.randrange(20, 30))
-        except UserChannelsTooMuchError:
-            print("This account has added too many User in channel")
-            account_index +=1
-            if account_index == 6:
-                print('adding capacity over')
-                break
-        except FloodWaitError as e :
-            print(f"This account has to wait for {e.seconds}, Because of Flood wait")
-            account_index +=1
-            if account_index == 6:
-                print('adding capacity over')
-                break
-        except PeerFloodError as e:
-            print(f"{e}")
-            account_index +=1
-            if account_index == 6:
-                print('adding capacity over')
-                break
-        except UserPrivacyRestrictedError:
-            print("The user's privacy settings do not allow you to do this. Skipping.")
-            continue
-        except UserNotMutualContactError:
-            print("The user's privacy settings do not allow you to do this. Skipping.")
-            continue
-        except Exception as e:
-            print(e)
-            TracebackType.print_exc()
-            continue
-        if added_member_count == 500:
-            break'''
-
-
-
-
-
+        
 
 if __name__ == "__main__":
     main()
