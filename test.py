@@ -155,10 +155,7 @@ async def add_members(scraping_group, target_group):
             adding_account_entity = await i.get_entity('me')
             print(adding_account_entity.first_name)
             adding_username = remaning_to_add_user[remaning_to_add_user_index]
-            try:
-                await add_user(added_member_count, i, adding_username, target_group_entity)
-            except Exception as e:
-                print(e)
+            await add_user(added_member_count, i, adding_username, target_group_entity)
             remaning_to_add_user_index += 1
             added_member_count +=1
         if len(all_adding_accounts):
