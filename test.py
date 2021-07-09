@@ -176,15 +176,15 @@ async def add_user(added_member_count, adding_user_info_list, adding_username, t
         time.sleep(random.randrange(60, 90))
     except UserChannelsTooMuchError:
         print(f"{adding_account_entity.first_name} has added too many User in channel")
-        all_adding_accounts.remove(all_adding_accounts)
+        all_adding_accounts.remove(adding_user_info_list)
     except FloodWaitError as e :
         print(f"This account has to wait for {e.seconds}, Because of Flood wait")
-        all_adding_accounts.remove(all_adding_accounts)
+        all_adding_accounts.remove(adding_user_info_list)
         await asyncio.sleep(e.seconds)
-        all_adding_accounts.append(all_adding_accounts)
+        all_adding_accounts.append(adding_user_info_list)
     except PeerFloodError as e:
         print(e)
-        all_adding_accounts.remove(all_adding_accounts)
+        all_adding_accounts.remove(adding_user_info_list)
     except UserPrivacyRestrictedError:
         print("The user's privacy settings do not allow you to do this. Skipping.")
     except UserNotMutualContactError:
